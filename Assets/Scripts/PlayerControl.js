@@ -25,6 +25,17 @@ private var currentDamageClickDuration : float;
 // how far the guide goes
 public var guideLength : float = 0.1;
 
+
+// sounds
+public var jump : AudioClip;
+public var chompFirst : AudioClip;
+public var chompRepeating : AudioClip;
+public var hurt : AudioClip;
+
+
+
+
+
 // guide line that shows the player how charged they are
 private var lineRenderer : LineRenderer;
 
@@ -36,6 +47,7 @@ private var knightControl : KnightControl;
 
 
 private var rb : Rigidbody2D;
+private var playerAudio : AudioSource;
 private var playerCollider: BoxCollider2D;
 private var currentStrength : float;
 private var isTouchingGround : boolean;
@@ -44,6 +56,7 @@ private var isTouchingGround : boolean;
 function Awake () {
 	rb = GetComponent. < Rigidbody2D > ();
 	playerCollider = GetComponent. < BoxCollider2D > ();
+	playerAudio = GetComponent. < AudioSource > ();
 	currentStrength = minJumpStrength;
 	lineRenderer = GetComponent. < LineRenderer > ();
 	currentDamageClickDuration = 0;
@@ -72,6 +85,8 @@ function Update () {
 	if (Input.GetMouseButtonDown(0)) {
 		if (attachedKnight) {
 			knightControl.health -= damage;
+			playerAudio.clip = chompRepeating;
+			playerAudio.Play();
 		}
 	}
 
@@ -101,6 +116,8 @@ function Update () {
 				DetachFromKnight();
 			}
 			rb.velocity += (direction * baseJumpMultiplier * currentStrength);
+			playerAudio.clip = jump;
+			playerAudio.Play();
 			currentDamageClickDuration = 0;
 			// Debug.Log(rb.velocity);
 		}
@@ -141,6 +158,8 @@ function AttachToKnight(knight : GameObject) {
 	// set "attached" flag on knight
 	knightControl.attached = true;
 	knightControl.CancelInvoke("Windup");
+	playerAudio.clip = chompFirst;
+	playerAudio.Play();
 }
 
 public function DetachFromKnight() {
@@ -151,6 +170,11 @@ public function DetachFromKnight() {
 		knightControl = null;
 		attachPoint = null;
 	}
+}
+
+public function Hurt() {
+	playerAudio.clip = hurt;
+	playerAudio.Play();
 }
 
 function ReEnableKnightCollision(knight : GameObject) {

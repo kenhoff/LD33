@@ -24,10 +24,20 @@ private var onCooldown : boolean;
 
 
 
+// sounds
+// sounds
+public var walk : AudioClip;
+public var walkSoundFrequency : float = 1.0;
+public var windup : AudioClip;
+public var swing : AudioClip;
+public var panic : AudioClip;
+public var panicSoundFrequency : float = 1.0;
+
 
 private var player : Transform;
 private var rb : Rigidbody2D;
 private var direction : int;
+private var knightAudio : AudioSource;
 
 
 
@@ -37,6 +47,7 @@ private var direction : int;
 function Awake () {
 	player = GameObject.FindWithTag("Player").transform;
 	rb = GetComponent. < Rigidbody2D > ();
+	knightAudio = GetComponent. < AudioSource > ();
 	scared = false;
 	attached = false;
 	onCooldown = false;
@@ -62,6 +73,9 @@ function FixedUpdate () {
 		if (!IsInvoking("PickDirection")) {
 			Invoke("PickDirection", 1);
 		}
+		if(!IsInvoking("PlayPanicSound")) {
+			Invoke("PlayPanicSound", panicSoundFrequency);
+		}
 	}
 	else if (scared) {
 		direction = -((player.position - transform.position).x > 0 ? 1 : -1);
@@ -70,6 +84,8 @@ function FixedUpdate () {
 		direction = 0;
 		// check to see if winding up; if not, start winding up
 		if (!IsInvoking("Windup") && !onCooldown) {
+			knightAudio.clip = windup;
+			knightAudio.Play();
 			Invoke("Windup", attackTime);
 		}
 	}
@@ -77,8 +93,21 @@ function FixedUpdate () {
 		direction = ((player.position - transform.position).x > 0 ? 1 : -1) ;
 	}
 	if (!IsInvoking("Windup")) {
+		if (!IsInvoking("PlayWalkSound")) {
+			Invoke("PlayWalkSound", walkSoundFrequency);
+		}
 		rb.MovePosition(rb.position + (Vector2(direction, 0) * speed * Time.deltaTime));
 	}
+}
+
+function PlayWalkSound() {
+	knightAudio.clip = walk;
+	knightAudio.Play();
+}
+
+function PlayPanicSound() {
+	knightAudio.clip = panic;
+	knightAudio.Play();
 }
 
 function PickDirection() {
@@ -91,9 +120,14 @@ function Windup() {
 	SwingAtPlayer();
 }
 function SwingAtPlayer() {
+	knightAudio.clip = swing;
+	knightAudio.Play();
 	onCooldown = true;
 	if ((player.position - transform.position).magnitude < attackDistance) {
-		player.GetComponent. < PlayerControl > ().DetachFromKnight();
+		var playerControl = player.GetComponent. < PlayerControl > ();
+		playerControl.DetachFromKnight();
+		playerControl.Hurt();
+
 		player.GetComponent.<Rigidbody2D>().AddForce( -((transform.position - player.position).normalized * attackForce), ForceMode2D.Impulse);
 	}
 	else {
