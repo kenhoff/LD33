@@ -116,9 +116,18 @@ function OnCollisionEnter2D (collision : Collision2D) {
 		isTouchingGround = true;
 		// Debug.Log(isTouchingGround);
 	}
+	CheckKnight(collision);
+}
+
+function OnCollisionStay2D (collision : Collision2D) {
+	CheckKnight(collision);
+}
+
+function CheckKnight(collision : Collision2D) {
 	if (collision.gameObject.CompareTag("Knight")) {
 		// Debug.Log("knight!");
-		if (collision.gameObject != attachedKnight) {
+
+		if ((collision.gameObject != attachedKnight) && !attachedKnight) {
 			AttachToKnight(collision.gameObject);
 		}
 	}
