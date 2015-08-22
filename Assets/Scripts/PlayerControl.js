@@ -119,10 +119,6 @@ function OnCollisionEnter2D (collision : Collision2D) {
 	CheckKnight(collision);
 }
 
-function OnCollisionStay2D (collision : Collision2D) {
-	CheckKnight(collision);
-}
-
 function CheckKnight(collision : Collision2D) {
 	if (collision.gameObject.CompareTag("Knight")) {
 		// Debug.Log("knight!");
@@ -144,14 +140,17 @@ function AttachToKnight(knight : GameObject) {
 
 	// set "attached" flag on knight
 	knightControl.attached = true;
+	knightControl.CancelInvoke("Windup");
 }
 
-function DetachFromKnight() {
-	knightControl.attached = false;
-	knightControl.ReEnableCollision();
-	attachedKnight = null;
-	knightControl = null;
-	attachPoint = null;
+public function DetachFromKnight() {
+	if (attachedKnight) {
+		knightControl.attached = false;
+		knightControl.ReEnableCollision();
+		attachedKnight = null;
+		knightControl = null;
+		attachPoint = null;
+	}
 }
 
 function ReEnableKnightCollision(knight : GameObject) {
