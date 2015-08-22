@@ -18,6 +18,10 @@ public var maxJumpStrength : float = 10;
 public var damage : float;
 
 
+public var maxDamageClickDuration : float = 1.0;
+private var currentDamageClickDuration : float;
+
+
 // how far the guide goes
 public var guideLength : float = 0.1;
 
@@ -42,6 +46,7 @@ function Awake () {
 	playerCollider = GetComponent. < BoxCollider2D > ();
 	currentStrength = minJumpStrength;
 	lineRenderer = GetComponent. < LineRenderer > ();
+	currentDamageClickDuration = 0;
 }
 
 function FixedUpdate() {
@@ -53,32 +58,50 @@ function FixedUpdate() {
 
 function Update () {
 
-	// Debug.Log(rb.velocity);
-
-
+	// if knight dies on us, detach
+	if (attachedKnight == null) {
+		knightControl = null;
+		attachPoint = null;
+	}
 
 	// look at mouse
 	var mouseWorldPosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
 	mouseWorldPosition.z = 0;
 	var direction = (mouseWorldPosition - transform.position).normalized;
 
+	if (Input.GetMouseButtonDown(0)) {
+		if (attachedKnight) {
+			knightControl.health -= damage;
+		}
+	}
 
 	if (Input.GetMouseButton(0)) {
+		if (attachedKnight) {
+			currentDamageClickDuration += Time.deltaTime;
+		}
 		currentStrength += Time.deltaTime * jumpStrengthGrowRate;
 		if (currentStrength > maxJumpStrength) {
 			currentStrength = maxJumpStrength;
 		}
-		lineRenderer.enabled = true;
-		lineRenderer.SetPosition (1, direction * currentStrength * guideLength);
+		if (!attachedKnight || (currentDamageClickDuration > maxDamageClickDuration)) {
+			lineRenderer.enabled = true;
+			lineRenderer.SetPosition (1, direction * currentStrength * guideLength);
+		}
 	}
 
 
 	if (Input.GetMouseButtonUp(0)) {
-		if (isTouchingGround || attachedKnight) {
+		if (attachedKnight && (currentDamageClickDuration < maxDamageClickDuration)) {
+			// break
+			// Debug.Log(currentDamageClickDuration);
+			currentDamageClickDuration = 0;
+		}
+		else if (isTouchingGround || attachedKnight) {
 			if (attachedKnight) {
 				DetachFromKnight();
 			}
 			rb.velocity += (direction * baseJumpMultiplier * currentStrength);
+			currentDamageClickDuration = 0;
 			// Debug.Log(rb.velocity);
 		}
 		currentStrength = minJumpStrength;
@@ -88,7 +111,7 @@ function Update () {
 }
 
 function OnCollisionEnter2D (collision : Collision2D) {
-	Debug.Log(collision.gameObject);
+	// Debug.Log(collision.gameObject);
 	if (collision.gameObject.CompareTag("Jumpable")) {
 		isTouchingGround = true;
 		// Debug.Log(isTouchingGround);
