@@ -5,7 +5,7 @@ public var delay : float = 3;
 public var spawnRate : float = 3;
 
 function Awake () {
-	InvokeRepeating("SpawnKnight", delay, spawnRate);
+	// InvokeRepeating("SpawnKnight", delay, spawnRate);
 }
 
 function SpawnKnight() {
