@@ -21,6 +21,7 @@ public var attackForce : float;
 public var attackTime : float;
 public var cooldownTime : float;
 private var onCooldown : boolean;
+public var isWindingUp : boolean;
 
 
 
@@ -53,11 +54,13 @@ function Awake () {
 	scared = false;
 	attached = false;
 	onCooldown = false;
+	isWindingUp = false;
 }
 
 function Update() {
 
 	knightAnimator.SetBool("IsPanicking", (scared || attached));
+	knightAnimator.SetBool("IsWindingUp", isWindingUp);
 
 	if (health <= 0) {
 		// scare all other knights in a radius
@@ -67,6 +70,7 @@ function Update() {
 			knightControl.scared = true;
 			knightControl.GetUnScared();
 			knightControl.CancelInvoke("Windup");
+			knightControl.isWindingUp = false;
 		}
 		Destroy(gameObject);
 	}
@@ -75,10 +79,10 @@ function Update() {
 function FixedUpdate () {
 
 	if (rb.velocity.x > 0.1) {
-		transform.localScale.x = 1;
+		transform.localScale.x = -1;
 	}
 	if (rb.velocity.x < -0.1) {
-		transform.localScale.x = -1;
+		transform.localScale.x = 1;
 	}
 	if (attached) {
 		// flail!
@@ -99,6 +103,7 @@ function FixedUpdate () {
 			knightAudio.clip = windup;
 			knightAudio.Play();
 			Invoke("Windup", attackTime);
+			isWindingUp = true;
 		}
 	}
 	else {
@@ -135,6 +140,8 @@ function Windup() {
 	SwingAtPlayer();
 }
 function SwingAtPlayer() {
+	knightAnimator.SetTrigger("Swing");
+	isWindingUp = false;
 	knightAudio.clip = swing;
 	knightAudio.Play();
 	onCooldown = true;

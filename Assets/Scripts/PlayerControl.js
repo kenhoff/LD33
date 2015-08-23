@@ -175,6 +175,7 @@ function AttachToKnight(knight : GameObject) {
 	// set "attached" flag on knight
 	knightControl.attached = true;
 	knightControl.CancelInvoke("Windup");
+	knightControl.isWindingUp = false;
 	playerAudio.clip = chompFirst;
 	playerAudio.Play();
 }
