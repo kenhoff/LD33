@@ -33,7 +33,7 @@ function SpawnWaves() {
 
 function Update () {
 	if (Input.GetMouseButtonUp(0)) {
-		Debug.Log("setting to fade");
+		// Debug.Log("setting to fade");
 		fade = true;
 		if (!isSpawning) {
 			SpawnWaves();
