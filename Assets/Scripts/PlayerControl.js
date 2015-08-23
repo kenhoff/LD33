@@ -17,6 +17,10 @@ public var maxJumpStrength : float = 10;
 // how much damage the player does per click
 public var damage : float;
 
+public var gibletPrefab : GameObject;
+public var gibletSpeed : float = 1;
+public var gibletAngularSpeed : float = 1;
+
 
 public var maxDamageClickDuration : float = 1.0;
 private var currentDamageClickDuration : float;
@@ -100,6 +104,13 @@ function Update () {
 
 	if (Input.GetMouseButtonDown(0)) {
 		if (attachedKnight) {
+			var giblet = Instantiate(gibletPrefab, transform.position, Quaternion.identity);
+			var gibletRB = giblet.GetComponent. <Rigidbody2D>();
+			gibletRB.velocity = Random.insideUnitCircle * gibletSpeed;
+			gibletRB.velocity.y = 3;
+			gibletRB.angularVelocity = Random.Range(-1.0,1.0) * gibletAngularSpeed;
+			print(gibletRB.angularVelocity);
+
 			knightControl.health -= damage;
 			playerAudio.clip = chompRepeating;
 			playerAudio.Play();

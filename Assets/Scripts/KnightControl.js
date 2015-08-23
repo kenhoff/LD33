@@ -62,7 +62,9 @@ function Update() {
 	knightAnimator.SetBool("IsPanicking", (scared || attached));
 	knightAnimator.SetBool("IsWindingUp", isWindingUp);
 
+
 	if (health <= 0) {
+		knightAnimator.SetTrigger("Die");
 		// scare all other knights in a radius
 		var hitColliders : Collider2D[] = Physics2D.OverlapCircleAll(transform.position, deathRadius, 1 << LayerMask.NameToLayer("Knights"));
 		for (var i = 0; i < hitColliders.length; i++) {
@@ -72,7 +74,14 @@ function Update() {
 			knightControl.CancelInvoke("Windup");
 			knightControl.isWindingUp = false;
 		}
-		Destroy(gameObject);
+		GetComponent.<BoxCollider2D>().enabled = false;
+		rb.gravityScale = 0;
+		rb.velocity = Vector2.zero;
+		var playerControl = player.GetComponent. < PlayerControl > ();
+		playerControl.DetachFromKnight();
+		// playerControl.Hurt();
+		this.enabled = false;
+		// Destroy(gameObject);
 	}
 }
 
