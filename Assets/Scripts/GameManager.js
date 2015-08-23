@@ -6,6 +6,10 @@ public var titleObject : List.<UI.Image>;
 public var titleFadeRate : float;
 private var fade : boolean;
 
+
+// dev flag
+public var SpawnEnabled : boolean = true;
+
 public var KnightPrefab : GameObject;
 public var knightSpawnPoint : Transform;
 public var startWait: float = 3;
@@ -35,7 +39,7 @@ function Update () {
 	if (Input.GetMouseButtonUp(0)) {
 		// Debug.Log("setting to fade");
 		fade = true;
-		if (!isSpawning) {
+		if (!isSpawning && SpawnEnabled) {
 			SpawnWaves();
 			isSpawning = true;
 			// print("spawning!");

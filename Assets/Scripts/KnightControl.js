@@ -36,6 +36,7 @@ public var panicSoundFrequency : float = 1.0;
 
 private var player : Transform;
 private var rb : Rigidbody2D;
+private var knightAnimator : Animator;
 private var direction : int;
 private var knightAudio : AudioSource;
 
@@ -48,12 +49,16 @@ function Awake () {
 	player = GameObject.FindWithTag("Player").transform;
 	rb = GetComponent. < Rigidbody2D > ();
 	knightAudio = GetComponent. < AudioSource > ();
+	knightAnimator = GetComponent. <Animator>();
 	scared = false;
 	attached = false;
 	onCooldown = false;
 }
 
 function Update() {
+
+	knightAnimator.SetBool("IsPanicking", (scared || attached));
+
 	if (health <= 0) {
 		// scare all other knights in a radius
 		var hitColliders : Collider2D[] = Physics2D.OverlapCircleAll(transform.position, deathRadius, 1 << LayerMask.NameToLayer("Knights"));
@@ -68,6 +73,13 @@ function Update() {
 }
 
 function FixedUpdate () {
+
+	if (rb.velocity.x > 0.1) {
+		transform.localScale.x = 1;
+	}
+	if (rb.velocity.x < -0.1) {
+		transform.localScale.x = -1;
+	}
 	if (attached) {
 		// flail!
 		if (!IsInvoking("PickDirection")) {
@@ -96,7 +108,10 @@ function FixedUpdate () {
 		if (!IsInvoking("PlayWalkSound")) {
 			Invoke("PlayWalkSound", walkSoundFrequency);
 		}
-		rb.MovePosition(rb.position + (Vector2(direction, 0) * speed * Time.deltaTime));
+		// rb.MovePosition(rb.position + (Vector2(direction, 0) * speed * Time.deltaTime));
+		// print(direction * speed * Time.deltaTime);
+		rb.velocity.x = direction * speed;
+		// print(rb.velocity);
 	}
 }
 

@@ -49,6 +49,7 @@ private var knightControl : KnightControl;
 private var rb : Rigidbody2D;
 private var playerAudio : AudioSource;
 private var playerCollider: BoxCollider2D;
+private var playerAnimator : Animator;
 private var currentStrength : float;
 private var isTouchingGround : boolean;
 
@@ -57,6 +58,7 @@ function Awake () {
 	rb = GetComponent. < Rigidbody2D > ();
 	playerCollider = GetComponent. < BoxCollider2D > ();
 	playerAudio = GetComponent. < AudioSource > ();
+	playerAnimator = GetComponent. < Animator > ();
 	currentStrength = minJumpStrength;
 	lineRenderer = GetComponent. < LineRenderer > ();
 	currentDamageClickDuration = 0;
@@ -70,6 +72,20 @@ function FixedUpdate() {
 }
 
 function Update () {
+	var isChomping = false;
+	if (attachedKnight) {
+		isChomping = true;
+	}
+	playerAnimator.SetBool("IsTouchingGround", isTouchingGround);
+	playerAnimator.SetBool("IsChomping", isChomping);
+
+	if (rb.velocity.x > 0.1) {
+		transform.localScale.x = -1;
+	}
+	if (rb.velocity.x < -0.1) {
+		transform.localScale.x = 1;
+	}
+
 
 	// if knight dies on us, detach
 	if (attachedKnight == null) {
@@ -100,7 +116,8 @@ function Update () {
 		}
 		if (!attachedKnight || (currentDamageClickDuration > maxDamageClickDuration)) {
 			lineRenderer.enabled = true;
-			lineRenderer.SetPosition (1, direction * currentStrength * guideLength);
+			lineRenderer.SetPosition (0, transform.position);
+			lineRenderer.SetPosition (1, transform.position + (direction * currentStrength * guideLength));
 		}
 	}
 
