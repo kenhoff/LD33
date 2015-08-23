@@ -16,19 +16,26 @@ public var startWait: float = 3;
 public var timeBetweenWaves : float = 10;
 public var timeBetweenSpawns : float = 1;
 public var knightsPerWave : int = 3;
+public var numberOfKnightsTotal : int = 3;
 private var isSpawning : boolean;
-
+private var numberOfKnightsSpawned : int;
 
 function Awake () {
 	fade = false;
 	isSpawning = false;
+	numberOfKnightsSpawned = 0;
+	if (!isSpawning && SpawnEnabled) {
+		isSpawning = true;
+		SpawnWaves();
+	}
 }
 
 function SpawnWaves() {
 	yield WaitForSeconds(startWait);
-	while (true) {
+	while (numberOfKnightsSpawned < numberOfKnightsTotal) {
 		for (var i = 0; i < knightsPerWave; i++) {
 			Instantiate(KnightPrefab, knightSpawnPoint.position, Quaternion.identity);
+			numberOfKnightsSpawned += 1;
 			yield WaitForSeconds(timeBetweenSpawns);
 		}
 		yield WaitForSeconds(timeBetweenWaves);
@@ -39,11 +46,6 @@ function Update () {
 	if (Input.GetMouseButtonUp(0)) {
 		// Debug.Log("setting to fade");
 		fade = true;
-		if (!isSpawning && SpawnEnabled) {
-			SpawnWaves();
-			isSpawning = true;
-			// print("spawning!");
-		}
 	}
 	if (fade) {
 		for (var i = 0; i < titleObject.Count; i++) {

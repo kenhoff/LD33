@@ -14,6 +14,9 @@ public var unscaredTime : float = 5;
 public var deathRadius : float = 10;
 
 
+public var scale : float = 1.0;
+public var bigKnight: boolean = false;
+
 
 // attack-related things
 public var attackDistance : float;
@@ -80,18 +83,26 @@ function Update() {
 		var playerControl = player.GetComponent. < PlayerControl > ();
 		playerControl.DetachFromKnight();
 		// playerControl.Hurt();
+		gameObject.tag = "Untagged";
+		if (bigKnight) {
+			Invoke("Credits", 3);
+		}
 		this.enabled = false;
 		// Destroy(gameObject);
 	}
 }
 
+function Credits() {
+	Application.LoadLevel("Credits");
+}
+
 function FixedUpdate () {
 
 	if (rb.velocity.x > 0.1) {
-		transform.localScale.x = -1;
+		transform.localScale.x = -scale;
 	}
 	if (rb.velocity.x < -0.1) {
-		transform.localScale.x = 1;
+		transform.localScale.x = scale;
 	}
 	if (attached) {
 		// flail!

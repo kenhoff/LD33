@@ -52,7 +52,7 @@ private var knightControl : KnightControl;
 
 private var rb : Rigidbody2D;
 private var playerAudio : AudioSource;
-private var playerCollider: BoxCollider2D;
+private var playerCollider: CircleCollider2D;
 private var playerAnimator : Animator;
 private var currentStrength : float;
 private var isTouchingGround : boolean;
@@ -60,7 +60,7 @@ private var isTouchingGround : boolean;
 
 function Awake () {
 	rb = GetComponent. < Rigidbody2D > ();
-	playerCollider = GetComponent. < BoxCollider2D > ();
+	playerCollider = GetComponent. < CircleCollider2D > ();
 	playerAudio = GetComponent. < AudioSource > ();
 	playerAnimator = GetComponent. < Animator > ();
 	currentStrength = minJumpStrength;
@@ -109,7 +109,7 @@ function Update () {
 			gibletRB.velocity = Random.insideUnitCircle * gibletSpeed;
 			gibletRB.velocity.y = 3;
 			gibletRB.angularVelocity = Random.Range(-1.0,1.0) * gibletAngularSpeed;
-			print(gibletRB.angularVelocity);
+			// print(gibletRB.angularVelocity);
 
 			knightControl.health -= damage;
 			playerAudio.clip = chompRepeating;
