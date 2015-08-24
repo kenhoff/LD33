@@ -6,6 +6,7 @@ public var speed : float;
 public var attachPoint : Transform;
 public var attached : boolean;
 public var collisionReEnableTime : float = 1.0;
+public var alternate : boolean = false;
 
 
 // death-related things
@@ -152,7 +153,15 @@ function PlayPanicSound() {
 
 function PickDirection() {
 	// this should do the random walk stuff
-	direction = (Random.value > 0.5 ? 1 : -1);
+	if (alternate) {
+		if (direction == 0) {
+			direction = 1;
+		}
+		direction = -direction;
+	}
+	else {
+		direction = (Random.value > 0.5 ? 1 : -1);
+	}
 }
 
 
