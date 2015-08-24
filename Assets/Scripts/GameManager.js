@@ -9,9 +9,10 @@ private var fade : boolean;
 
 // dev flag
 public var SpawnEnabled : boolean = true;
+public var InfiniteSpawn : boolean = false;
 
 public var KnightPrefab : GameObject;
-public var knightSpawnPoint : Transform;
+public var knightSpawnPoints : List.<Transform>;
 public var startWait: float = 3;
 public var timeBetweenWaves : float = 10;
 public var timeBetweenSpawns : float = 1;
@@ -32,10 +33,12 @@ function Awake () {
 
 function SpawnWaves() {
 	yield WaitForSeconds(startWait);
-	while (numberOfKnightsSpawned < numberOfKnightsTotal) {
+	while ((numberOfKnightsSpawned < numberOfKnightsTotal) || InfiniteSpawn) {
 		for (var i = 0; i < knightsPerWave; i++) {
-			Instantiate(KnightPrefab, knightSpawnPoint.position, Quaternion.identity);
-			numberOfKnightsSpawned += 1;
+			for (var j = 0; j < knightSpawnPoints.Count; j++) {
+				Instantiate(KnightPrefab, knightSpawnPoints[j].position, Quaternion.identity);
+				numberOfKnightsSpawned += 1;
+			}
 			yield WaitForSeconds(timeBetweenSpawns);
 		}
 		yield WaitForSeconds(timeBetweenWaves);
